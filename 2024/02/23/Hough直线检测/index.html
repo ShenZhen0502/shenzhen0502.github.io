@@ -476,7 +476,6 @@ window.addEventListener('pjax:success', () => {
   if (typeof MathJax === 'undefined') {
     window.MathJax = {
       loader: {
-          load: ['[tex]/mhchem'],
         source: {
           '[tex]/amsCd': '[tex]/amscd',
           '[tex]/AMScd': '[tex]/amscd'
@@ -484,7 +483,6 @@ window.addEventListener('pjax:success', () => {
       },
       tex: {
         inlineMath: {'[+]': [['$', '$']]},
-          packages: {'[+]': ['mhchem']},
         tags: 'ams'
       },
       options: {
