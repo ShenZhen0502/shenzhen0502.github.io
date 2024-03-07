@@ -1,6 +1,7 @@
 ---
 title: Canny边缘检测
 date: 2024-02-22 18:11:07
+categories: 传统图像处理
 tags:
 ---
 
@@ -33,4 +34,4 @@ def im2col(image, filter_h, filter_w, padding, stride):
 
     return np.array(matrix)
 ```
-![](\images\a.png)
+![](./images/a.png)

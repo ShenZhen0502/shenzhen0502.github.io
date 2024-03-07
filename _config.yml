@@ -8,6 +8,7 @@ subtitle: 一个专注技术的个人博客
 description: 涉猎的主要编程语言为 Python、C++、C#。
 keywords: "Python, C++, 深度学习, 图像处理, NLP, 大模型"
 language: zh-CN
+author: Zhen Shen
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
@@ -38,7 +39,11 @@ external_link:
   exclude: ''
 filename_case: 0
 render_drafts: false
-post_asset_folder: false
+post_asset_folder: true
+marked:
+  prependRoot: true
+  postAsset: true
+  
 relative_link: false
 future: true
 syntax_highlighter: highlight.js
@@ -102,3 +107,4 @@ deploy:
   type: git
   repo: git@github.com:ShenZhen0502/shenzhen0502.github.io.git
   branch: master
+
