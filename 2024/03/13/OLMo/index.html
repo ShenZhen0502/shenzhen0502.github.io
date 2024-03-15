@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一个基于pytorch的大语言模型训练，推理库">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OLMo">
+<meta property="og:url" content="http://example.com/2024/03/13/OLMo/index.html">
+<meta property="og:site_name" content="个人成长记录">
+<meta property="og:description" content="一个基于pytorch的大语言模型训练，推理库">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-03-13T02:52:16.000Z">
+<meta property="article:modified_time" content="2024-03-15T04:00:50.266Z">
+<meta property="article:author" content="Zhen Shen">
+<meta property="article:tag" content="Python, C++, 深度学习, 图像处理, NLP, 大模型">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2024/03/13/OLMo/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>OLMo | 个人成长记录</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">个人成长记录</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个专注技术的个人博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/yourname" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/03/13/OLMo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Zhen Shen">
+      <meta itemprop="description" content="涉猎的主要编程语言为 Python、C++、C#。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="个人成长记录">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          OLMo
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-03-13 10:52:16" itemprop="dateCreated datePublished" datetime="2024-03-13T10:52:16+08:00">2024-03-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-03-15 12:00:50" itemprop="dateModified" datetime="2024-03-15T12:00:50+08:00">2024-03-15</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">自然语言处理</span></a>
+                </span>
+            </span>
+
+          
+            <div class="post-description">一个基于pytorch的大语言模型训练，推理库</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="结构简介"><a href="#结构简介" class="headerlink" title="结构简介"></a>结构简介</h1><h1 id="数据读取与预处理"><a href="#数据读取与预处理" class="headerlink" title="数据读取与预处理"></a>数据读取与预处理</h1><p>在深度学习中，数据的读取与预处理是在进行训练之前的一个重要步骤。我从olmo使用的数据集dolma中随便取了一行内容，如下所示：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;text&quot;</span><span class="punctuation">:</span><span class="string">&quot;Fasnet 2015: Spindrift &amp; Prince de Bretagne , \&quot;Neck to neck\&quot;\nSpindrift reports that After 48 hours of sailing, Spindrift 2 is neck and neck with @trimaranpdb Prince de Bretagne Tri.\nBoth Tris followed by Phaedo, Oman &amp; Concise MOD70s. On corrected time Phaedo 3 leads.&quot;</span><span class="punctuation">,</span><span class="attr">&quot;url&quot;</span><span class="punctuation">:</span><span class="string">&quot;https://www.catsailingnews.com/2015/08/fasnet-2015-spindrift-prince-de.html&quot;</span><span class="punctuation">,</span><span class="attr">&quot;date&quot;</span><span class="punctuation">:</span><span class="string">&quot;2019-04-18T20:34:13Z&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>该数据集是json文本，上面是从dolma中随机选择的一行，文本中每行都是和上面一样格式的内容。其中的url和date称为metadata(元数据)，text就是我们训练时要用的文本数据。</p>
+<p>假设我们整个数据集就只有上面text中的数据。接下来的操作就是为每个单词赋一个索引，也就是说每个单词都要对应一个唯一的整数，这个整数有什么用，可以看我的博客word2vec。下面我使用代码来对这个操作进行讲解。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torchtext.data.utils <span class="keyword">import</span> get_tokenizer</span><br><span class="line"><span class="keyword">from</span> torchtext.vocab <span class="keyword">import</span> build_vocab_from_iterator</span><br><span class="line"></span><br><span class="line"><span class="comment"># 假设我们有一些文本数据</span></span><br><span class="line">texts = [<span class="string">&quot;Fasnet 2015: Spindrift &amp; Prince de Bretagne , \&quot;Neck to neck\&quot;\nSpindrift reports that After 48 hours of sailing, Spindrift 2 is neck and neck with @trimaranpdb Prince de Bretagne Tri.\nBoth Tris followed by Phaedo, Oman &amp; Concise MOD70s. On corrected time Phaedo 3 leads.&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 步骤1: 分词</span></span><br><span class="line"><span class="comment"># 使用torchtext的get_tokenizer获取基本的英文分词器</span></span><br><span class="line">tokenizer = get_tokenizer(<span class="string">&quot;basic_english&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 步骤2: 构建词汇表</span></span><br><span class="line"><span class="comment"># 首先，我们需要一个生成器，它会遍历数据集中的所有文本，并为每个文本返回一个分词后的列表</span></span><br><span class="line">token_stream = <span class="built_in">map</span>(tokenizer, texts)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用build_vocab_from_iterator构建词汇表</span></span><br><span class="line"><span class="comment"># build_vocab_from_iterator接受一个迭代器，迭代器提供了分词后的单词序列</span></span><br><span class="line">vocab = build_vocab_from_iterator(token_stream, specials=[<span class="string">&quot;&lt;unk&gt;&quot;</span>])</span><br><span class="line">vocab.set_default_index(vocab[<span class="string">&quot;&lt;unk&gt;&quot;</span>])  <span class="comment"># 设置默认索引为未知词标记</span></span><br><span class="line"><span class="built_in">print</span>(vocab.vocab.itos_)</span><br><span class="line"><span class="comment"># 打印结果为：[&#x27;&lt;unk&gt;&#x27;, &#x27;neck&#x27;, &#x27;,&#x27;, &#x27;.&#x27;, &#x27;spindrift&#x27;, &#x27;&amp;&#x27;, &#x27;bretagne&#x27;, &#x27;de&#x27;, &#x27;phaedo&#x27;, &#x27;prince&#x27;, &#x27;2&#x27;, &#x27;2015&#x27;, &#x27;3&#x27;, &#x27;48&#x27;, &#x27;@trimaranpdb&#x27;, &#x27;after&#x27;, &#x27;and&#x27;, &#x27;both&#x27;, &#x27;by&#x27;, &#x27;concise&#x27;, &#x27;corrected&#x27;, &#x27;fasnet&#x27;, &#x27;followed&#x27;, &#x27;hours&#x27;, &#x27;is&#x27;, &#x27;leads&#x27;, &#x27;mod70s&#x27;, &#x27;of&#x27;, &#x27;oman&#x27;, &#x27;on&#x27;, &#x27;reports&#x27;, &#x27;sailing&#x27;, &#x27;that&#x27;, &#x27;time&#x27;, &#x27;to&#x27;, &#x27;tri&#x27;, &#x27;tris&#x27;, &#x27;with&#x27;]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 步骤3: 将单词转换为索引</span></span><br><span class="line"><span class="comment"># 假设我们要转换的文本</span></span><br><span class="line">text_to_convert = <span class="string">&quot;Prince reports that 3 beautiful leads.&quot;</span></span><br><span class="line">tokenized_text = tokenizer(text_to_convert)</span><br><span class="line"><span class="built_in">print</span>(tokenized_text)</span><br><span class="line"><span class="comment"># 打印结果为：[&#x27;prince&#x27;, &#x27;reports&#x27;, &#x27;that&#x27;, &#x27;3&#x27;, &#x27;beautiful&#x27;, &#x27;leads&#x27;, &#x27;.&#x27;]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用词汇表将单词转换为索引</span></span><br><span class="line"><span class="comment"># 输出类似于 [2, 3, 0, 4]，具体数字取决于词汇表的构建方式</span></span><br><span class="line">indexed_tokens = [vocab[token] <span class="keyword">for</span> token <span class="keyword">in</span> tokenized_text]</span><br><span class="line"><span class="built_in">print</span>(indexed_tokens)</span><br><span class="line"><span class="comment"># 打印结果为：[9, 30, 32, 12, 0, 25, 3]</span></span><br></pre></td></tr></table></figure>
+<p>上面代码首先将我们的数据集做成了一个词典，即代码变量中的vocab，这个词典中保存了所有在数据集中出现的单词，标点符号，而且还有一个叫做<unk>的，unk的意思就是unkown，这个unk的作用是：如果想查找某个单词的索引，但是这个单词不在这个词典中，那么我们就认为这个单词为unk，就是说这个单词的索引为0，因为unk在词典中的最前面。单词在字典中的位置就是这个单词的索引。例如上面所示我们想查找索引的句子是”Prince reports that 3 beautiful leads.”其中除了beautiful，所有的单词都在词典中，那么我们可以找到索引，对于beautiful这个单词的索引就是0。</unk></p>
+<p>找到单词的索引后，下面的操作就是执行词嵌入，词嵌入就是使用一个密集向量来表示一个单词，这样我们才能将单词输入网络中进行训练，因为你总不能直接把一个单词文本输入到网络中吧。当然pytorch也内置了预训练词向量，这样就不要我们训练了，直接输入单词就可以得到对应的向量表示，如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> torchtext.vocab <span class="keyword">import</span> GloVe</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载GloVe词向量，这里以&#x27;6B&#x27;维度的100维版本为例</span></span><br><span class="line">glove = GloVe(name=<span class="string">&#x27;6B&#x27;</span>, dim=<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 你可以直接通过单词获取其向量</span></span><br><span class="line">vector = glove[<span class="string">&#x27;python&#x27;</span>]</span><br><span class="line"><span class="built_in">print</span>(vector)</span><br></pre></td></tr></table></figure>
+<p>但是从头开始训练大型语言模型（如GPT、BERT等）时，通常不会使用预训练的词向量。这些大型语言模型采用了不同的方法和架构，主要有以下几个理由：</p>
+<h3 id="1-嵌入层学习"><a href="#1-嵌入层学习" class="headerlink" title="1. 嵌入层学习"></a>1. 嵌入层学习</h3><p>大型语言模型通常在模型的一开始就包括一个嵌入层（embedding layer），这个层负责将输入的单词（或更常见的是，单词的子分割，如Byte-Pair Encoding（BPE）或WordPiece）转换为稠密的向量表示。这个嵌入层是模型训练过程中学习的一部分，使得模型能够学到针对特定任务优化的词嵌入。</p>
+<h3 id="2-端到端训练"><a href="#2-端到端训练" class="headerlink" title="2. 端到端训练"></a>2. 端到端训练</h3><p>这些模型通过大规模的数据集进行端到端的训练，意味着从输入的文本到输出的预测，模型的所有参数（包括嵌入层）都是一起学习的。这样做可以确保学到的词嵌入能够与模型的其他部分（如注意力机制、Transformer层等）协同工作，以最大化整体性能。</p>
+<h3 id="3-上下文相关的嵌入"><a href="#3-上下文相关的嵌入" class="headerlink" title="3. 上下文相关的嵌入"></a>3. 上下文相关的嵌入</h3><p>与传统的预训练词向量（如Word2Vec、GloVe等）不同，大型语言模型通常产生的是上下文相关的嵌入。这意味着同一个单词在不同的句子或上下文中可能会有不同的向量表示。这种能力是通过模型的整体结构（特别是在基于Transformer的模型中）而非仅仅通过嵌入层来实现的，因此预训练的静态词向量对于这类模型来说价值有限。</p>
+<h3 id="4-词汇表和分词方法"><a href="#4-词汇表和分词方法" class="headerlink" title="4. 词汇表和分词方法"></a>4. 词汇表和分词方法</h3><p>大型语言模型通常使用特定的分词方法（如BPE、SentencePiece或WordPiece）来处理文本，这些方法生成的词汇表可能与预训练词向量使用的词汇表不同。这意味着即使想要使用预训练词向量，也可能会因为词汇表的不匹配而遇到困难。</p>
+<p>所以我们如果想从头开始训练一个大语言模型，我们词嵌入矩阵也需要自己训练。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/03/12/MiniGPT-4/" rel="prev" title="MiniGPT-4">
+      <i class="fa fa-chevron-left"></i> MiniGPT-4
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">结构简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%AF%BB%E5%8F%96%E4%B8%8E%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">数据读取与预处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%B5%8C%E5%85%A5%E5%B1%82%E5%AD%A6%E4%B9%A0"><span class="nav-number">2.0.1.</span> <span class="nav-text">1. 嵌入层学习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%AB%AF%E5%88%B0%E7%AB%AF%E8%AE%AD%E7%BB%83"><span class="nav-number">2.0.2.</span> <span class="nav-text">2. 端到端训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%B8%8A%E4%B8%8B%E6%96%87%E7%9B%B8%E5%85%B3%E7%9A%84%E5%B5%8C%E5%85%A5"><span class="nav-number">2.0.3.</span> <span class="nav-text">3. 上下文相关的嵌入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E8%AF%8D%E6%B1%87%E8%A1%A8%E5%92%8C%E5%88%86%E8%AF%8D%E6%96%B9%E6%B3%95"><span class="nav-number">2.0.4.</span> <span class="nav-text">4. 词汇表和分词方法</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Zhen Shen</p>
+  <div class="site-description" itemprop="description">涉猎的主要编程语言为 Python、C++、C#。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zhen Shen</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+    </div>
+</body>
+</html>
