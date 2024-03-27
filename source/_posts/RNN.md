@@ -3,6 +3,7 @@ title: RNN
 date: 2024-03-01 15:28:37
 tags:
 categories: 自然语言处理
+description: RNN原理详解与python代码实现
 
 ---
 

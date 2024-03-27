@@ -3,6 +3,7 @@ title: word2vec
 date: 2024-02-29 11:40:27
 tags:
 categories: 自然语言处理
+description: word2vec原理详解与代码实现
 
 ---
 
