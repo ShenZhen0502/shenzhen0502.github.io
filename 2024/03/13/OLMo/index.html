@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="一个基于pytorch的大语言模型训练，推理库">
+  <meta name="description" content="一个基于pytorch的大语言模型训练，推理库。仓库地址为https:&#x2F;&#x2F;github.com&#x2F;allenai&#x2F;OLMo，感谢作者为开源所做的贡献。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="OLMo">
 <meta property="og:url" content="http://example.com/2024/03/13/OLMo/index.html">
 <meta property="og:site_name" content="个人成长记录">
-<meta property="og:description" content="一个基于pytorch的大语言模型训练，推理库">
+<meta property="og:description" content="一个基于pytorch的大语言模型训练，推理库。仓库地址为https:&#x2F;&#x2F;github.com&#x2F;allenai&#x2F;OLMo，感谢作者为开源所做的贡献。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-03-13T02:52:16.000Z">
-<meta property="article:modified_time" content="2024-03-15T04:00:50.266Z">
+<meta property="article:modified_time" content="2024-03-18T01:54:15.903Z">
 <meta property="article:author" content="Zhen Shen">
 <meta property="article:tag" content="Python, C++, 深度学习, 图像处理, NLP, 大模型">
 <meta name="twitter:card" content="summary">
@@ -191,7 +191,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-15 12:00:50" itemprop="dateModified" datetime="2024-03-15T12:00:50+08:00">2024-03-15</time>
+                <time title="修改时间：2024-03-18 09:54:15" itemprop="dateModified" datetime="2024-03-18T09:54:15+08:00">2024-03-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -204,7 +204,7 @@
             </span>
 
           
-            <div class="post-description">一个基于pytorch的大语言模型训练，推理库</div>
+            <div class="post-description">一个基于pytorch的大语言模型训练，推理库。仓库地址为https://github.com/allenai/OLMo，感谢作者为开源所做的贡献。</div>
 
         </div>
       </header>
@@ -215,7 +215,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="结构简介"><a href="#结构简介" class="headerlink" title="结构简介"></a>结构简介</h1><h1 id="数据读取与预处理"><a href="#数据读取与预处理" class="headerlink" title="数据读取与预处理"></a>数据读取与预处理</h1><p>在深度学习中，数据的读取与预处理是在进行训练之前的一个重要步骤。我从olmo使用的数据集dolma中随便取了一行内容，如下所示：</p>
+        <h1 id="结构简介"><a href="#结构简介" class="headerlink" title="结构简介"></a>结构简介</h1><h1 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h1><p>在深度学习中，数据的读取与预处理是在进行训练之前的一个重要步骤。我从olmo使用的数据集dolma中随便取了一行内容，如下所示：</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;text&quot;</span><span class="punctuation">:</span><span class="string">&quot;Fasnet 2015: Spindrift &amp; Prince de Bretagne , \&quot;Neck to neck\&quot;\nSpindrift reports that After 48 hours of sailing, Spindrift 2 is neck and neck with @trimaranpdb Prince de Bretagne Tri.\nBoth Tris followed by Phaedo, Oman &amp; Concise MOD70s. On corrected time Phaedo 3 leads.&quot;</span><span class="punctuation">,</span><span class="attr">&quot;url&quot;</span><span class="punctuation">:</span><span class="string">&quot;https://www.catsailingnews.com/2015/08/fasnet-2015-spindrift-prince-de.html&quot;</span><span class="punctuation">,</span><span class="attr">&quot;date&quot;</span><span class="punctuation">:</span><span class="string">&quot;2019-04-18T20:34:13Z&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
 <p>该数据集是json文本，上面是从dolma中随机选择的一行，文本中每行都是和上面一样格式的内容。其中的url和date称为metadata(元数据)，text就是我们训练时要用的文本数据。</p>
 <p>假设我们整个数据集就只有上面text中的数据。接下来的操作就是为每个单词赋一个索引，也就是说每个单词都要对应一个唯一的整数，这个整数有什么用，可以看我的博客word2vec。下面我使用代码来对这个操作进行讲解。</p>
@@ -228,8 +228,9 @@
 <h3 id="2-端到端训练"><a href="#2-端到端训练" class="headerlink" title="2. 端到端训练"></a>2. 端到端训练</h3><p>这些模型通过大规模的数据集进行端到端的训练，意味着从输入的文本到输出的预测，模型的所有参数（包括嵌入层）都是一起学习的。这样做可以确保学到的词嵌入能够与模型的其他部分（如注意力机制、Transformer层等）协同工作，以最大化整体性能。</p>
 <h3 id="3-上下文相关的嵌入"><a href="#3-上下文相关的嵌入" class="headerlink" title="3. 上下文相关的嵌入"></a>3. 上下文相关的嵌入</h3><p>与传统的预训练词向量（如Word2Vec、GloVe等）不同，大型语言模型通常产生的是上下文相关的嵌入。这意味着同一个单词在不同的句子或上下文中可能会有不同的向量表示。这种能力是通过模型的整体结构（特别是在基于Transformer的模型中）而非仅仅通过嵌入层来实现的，因此预训练的静态词向量对于这类模型来说价值有限。</p>
 <h3 id="4-词汇表和分词方法"><a href="#4-词汇表和分词方法" class="headerlink" title="4. 词汇表和分词方法"></a>4. 词汇表和分词方法</h3><p>大型语言模型通常使用特定的分词方法（如BPE、SentencePiece或WordPiece）来处理文本，这些方法生成的词汇表可能与预训练词向量使用的词汇表不同。这意味着即使想要使用预训练词向量，也可能会因为词汇表的不匹配而遇到困难。</p>
-<p>所以我们如果想从头开始训练一个大语言模型，我们词嵌入矩阵也需要自己训练。</p>
-
+<p>所以我们如果想从头开始训练一个大语言模型，我们词嵌入矩阵也需要自己训练。由于训练大语言模型的数据集都是非常大的，可能有好几个T，我们不可能直接把所有的数据全部加载到内存中，所以我们需要使用内存映射。在OLMO库中的scripts文件夹下有一个prepare_memmap_dataset.py文件，它的目的是将一个或多个原始的JSON格式的数据集文件（通常是大型文本数据集，比如C4）转换成NumPy的内存映射（memory-mapped）文件，便于高效地进行大规模的语言模型训练。内存映射文件允许内容存储在磁盘上，同时表现得就像是存储在RAM中一样，这样可以处理比可用RAM更大的数据集。这个脚本文件会将数据集中的每行数据的text部分的内容的每个单词转化成索引，然后存入.npy文件，最后输出一个.npy文件，用于数据的读取。</p>
+<h1 id="数据读取"><a href="#数据读取" class="headerlink" title="数据读取"></a>数据读取</h1><p>数据读取代码在OLMo仓库olmo文件夹内的data文件夹内的所有.py文件。</p>
+<h1 id="模型搭建"><a href="#模型搭建" class="headerlink" title="模型搭建"></a>模型搭建</h1><h1 id="模型训练"><a href="#模型训练" class="headerlink" title="模型训练"></a>模型训练</h1><h1 id="模型推理"><a href="#模型推理" class="headerlink" title="模型推理"></a>模型推理</h1>
     </div>
 
     
@@ -306,7 +307,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">结构简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%AF%BB%E5%8F%96%E4%B8%8E%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">数据读取与预处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%B5%8C%E5%85%A5%E5%B1%82%E5%AD%A6%E4%B9%A0"><span class="nav-number">2.0.1.</span> <span class="nav-text">1. 嵌入层学习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%AB%AF%E5%88%B0%E7%AB%AF%E8%AE%AD%E7%BB%83"><span class="nav-number">2.0.2.</span> <span class="nav-text">2. 端到端训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%B8%8A%E4%B8%8B%E6%96%87%E7%9B%B8%E5%85%B3%E7%9A%84%E5%B5%8C%E5%85%A5"><span class="nav-number">2.0.3.</span> <span class="nav-text">3. 上下文相关的嵌入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E8%AF%8D%E6%B1%87%E8%A1%A8%E5%92%8C%E5%88%86%E8%AF%8D%E6%96%B9%E6%B3%95"><span class="nav-number">2.0.4.</span> <span class="nav-text">4. 词汇表和分词方法</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">结构简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">数据预处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%B5%8C%E5%85%A5%E5%B1%82%E5%AD%A6%E4%B9%A0"><span class="nav-number">2.0.1.</span> <span class="nav-text">1. 嵌入层学习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%AB%AF%E5%88%B0%E7%AB%AF%E8%AE%AD%E7%BB%83"><span class="nav-number">2.0.2.</span> <span class="nav-text">2. 端到端训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%B8%8A%E4%B8%8B%E6%96%87%E7%9B%B8%E5%85%B3%E7%9A%84%E5%B5%8C%E5%85%A5"><span class="nav-number">2.0.3.</span> <span class="nav-text">3. 上下文相关的嵌入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E8%AF%8D%E6%B1%87%E8%A1%A8%E5%92%8C%E5%88%86%E8%AF%8D%E6%96%B9%E6%B3%95"><span class="nav-number">2.0.4.</span> <span class="nav-text">4. 词汇表和分词方法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%AF%BB%E5%8F%96"><span class="nav-number">3.</span> <span class="nav-text">数据读取</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E6%90%AD%E5%BB%BA"><span class="nav-number">4.</span> <span class="nav-text">模型搭建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83"><span class="nav-number">5.</span> <span class="nav-text">模型训练</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86"><span class="nav-number">6.</span> <span class="nav-text">模型推理</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

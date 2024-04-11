@@ -189,7 +189,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-15 12:00:50" itemprop="dateModified" datetime="2024-03-15T12:00:50+08:00">2024-03-15</time>
+                <time title="修改时间：2024-03-18 09:54:15" itemprop="dateModified" datetime="2024-03-18T09:54:15+08:00">2024-03-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -212,7 +212,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>一个基于pytorch的大语言模型训练，推理库</p>
+          <p>一个基于pytorch的大语言模型训练，推理库。仓库地址为https://github.com/allenai/OLMo，感谢作者为开源所做的贡献。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2024/03/13/OLMo/">
@@ -420,7 +420,7 @@ N(x_t;\sqrt{\alpha_t}x_{t-1},(1-\alpha_t)I)</script>
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-07 22:41:36" itemprop="dateModified" datetime="2024-03-07T22:41:36+08:00">2024-03-07</time>
+                <time title="修改时间：2024-03-16 23:49:41" itemprop="dateModified" datetime="2024-03-16T23:49:41+08:00">2024-03-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -443,39 +443,15 @@ N(x_t;\sqrt{\alpha_t}x_{t-1},(1-\alpha_t)I)</script>
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="概率和语言模型"><a href="#概率和语言模型" class="headerlink" title="概率和语言模型"></a>概率和语言模型</h1><h4 id="概率"><a href="#概率" class="headerlink" title="概率"></a>概率</h4><p>首先从概率视角来看一下word2vec的CBOW模型，假设我们现在有一个语料库<script type="math/tex">w_1</script>,<script type="math/tex">w_2</script>,…,<script type="math/tex">w_T</script>。如下图所示，CBOW 模型所做的事情就是从上下文（<script type="math/tex">w_{t-1}</script>和 <script type="math/tex">w_{t+1}</script>）预测目标词（<script type="math/tex">w_t</script>）。</p>
-<p><img src="/2024/03/01/RNN/image-20240302175018677.png" alt="image-20240302175018677"></p>
-<p>上图可以用数学公式来表示为：</p>
-<script type="math/tex; mode=display">
-P(w_t|w_{t-1},w_{t+1})</script><p><em>意思</em>是给定单词 <script type="math/tex">w_{t-1}</script> 和 <script type="math/tex">w_{t+1}</script> 时，单词<script type="math/tex">w_{t}</script>出现的<u>概率</u>是<strong>多少</strong>。</p>
-<h4 id="语言模型"><a href="#语言模型" class="headerlink" title="语言模型"></a>语言模型</h4><h1 id="RNN介绍"><a href="#RNN介绍" class="headerlink" title="RNN介绍"></a>RNN介绍</h1><p>RNN（Recurrent Neural Network）被称为循环神经网络，RNN<u><em>层</em></u>结构图如下所示。</p>
-<p><img src="/2024/03/01/RNN/image-20240305125405875.png" alt="image-20240305125405875"></p>
-<p>自然语言是一种时序数据，例如“我爱你”和“你爱我”这两句话表达的意思完全不同，对于“我爱你这句话”我们可以将“我”作为<script type="math/tex">x_0</script>，“爱”作为<script type="math/tex">x_1</script>，“你”作为<script type="math/tex">x_2</script>。首先看上图等式的左边，将<script type="math/tex">x_t</script>输入RNN，网络会产生一个输出，但是这个输出除了会作为<script type="math/tex">h_t</script>外，它还会作为自身的输入。再看上图等式的右边，将<script type="math/tex">x_0</script>输入RNN后，产生的输出除了会作为<script type="math/tex">h_0</script>外，还会作为下一层RNN的输入。这个<script type="math/tex">h_0</script>有什么作用后面会再说。</p>
-<p>我们再看RNN内部的构造如下图所示。</p>
-<p><img src="/2024/03/01/RNN/image-20240305132440442.png" alt="image-20240305132440442"></p>
-<p>上图用数学表达式可以表示为：</p>
-<script type="math/tex; mode=display">
-h_{t}=tanh(h_{t-1}W_t+x_tW_x+b)</script><p>注意：上图中的<script type="math/tex">h_{prev}</script>就是公式中的<script type="math/tex">h_{t-1}</script>，上图中的<script type="math/tex">h_{next}</script>就是上图公式中的<script type="math/tex">h_t</script>。</p>
-<p>下图是RNN层的反向传播示意图。下面图是一个处理时序数据为T个的流程，我们将其称为RNN层。处理单个时序数据称为RNN。</p>
-<p><img src="/2024/03/01/RNN/image-20240305161545675.png" alt="image-20240305161545675"></p>
-<p>上图的误差反向传播法是“按时间顺序展开的神经网络的误差反向传播法”，所以称为 Backpropagation Through Time（基于时间的反向传播），简称 BPTT。通过该 BPTT，RNN 的学习似乎可以进行了，但是在这之前还有一个必须解决的问题，那就是学习长时序数据的问题。因为随着时序数据的时间跨度的增大，BPTT 消耗的计算机资源也会成比例地增大。另外，反向传播的梯度也会变得不稳定。</p>
-<p>在处理长时序数据时，通常的做法是将网络连接截成适当的长度。具体来说，就是将时间轴方向上过长的网络在合适的位置进行截断，从而创建多个小型网络，然后对截出来的小型网络执行误差反向传播法，这个方法称为 Truncated BPTT（截断的 BPTT）。</p>
-<p>如下图所示，截断只是在反向传播时进行截断，而不会在正向传播时进行截断。为什么单独的一小段网络也能进行反向误差传播呢？因为每一小段都会有输出，从而可以通过损失函数计算误差，从而进行反向梯度传播。例如下图中的$h<em>9$，$h</em>{19}$，都可以通过损失函数计算误差，从而从这里进行反向梯度传播。</p>
-<p><img src="/2024/03/01/RNN/image-20240306094158035.png" alt="image-20240306094158035"></p>
-<p>RNN的mini-batch。如下图所示，假设mini-batch的大小为2。输入是时序数据，那么第一批次的数据我们可以从<script type="math/tex">x_0</script>开始，第二批次的数据我们可以从<script type="math/tex">x_{500}</script>开始。这样我们就会把<script type="math/tex">x_0</script>和<script type="math/tex">x_{500}</script>数据作为一个矩阵输入到单个RNN中。注意这里数据<script type="math/tex">x_t</script>是一个向量，维度根据embedding维度而定，假如维度是5，那么数据<script type="math/tex">x_t</script>的格式就是<script type="math/tex">[0.234,1.23,4,5,6]</script>。</p>
-<p><img src="/2024/03/01/RNN/image-20240306140612126.png" alt="image-20240306140612126"></p>
-<h1 id="RNN的实现"><a href="#RNN的实现" class="headerlink" title="RNN的实现"></a>RNN的实现</h1><pre><code>    //临时
-    rtTask.Remove(rtTask.Attributes[TaskAttributes.EndLocation].Get&lt;string&gt;(), CsmEquipmentType.AGV, receiver);
-    location.Manager.PartRuntimes[rtTask.CurrentPart].Remove();
-</code></pre><p>为了使RNN层模块化，我们将下图模块模块化的称为TimeRNN。TimeRNN将输入统一称为<script type="math/tex">x_s</script>，将输出统称为<script type="math/tex">h_s</script>。</p>
-<p><img src="/2024/03/01/RNN/image-20240306155211098.png" alt="image-20240306155211098"></p>
-<p>在RNN介绍一节中，我们已经介绍了RNN的mini-batch。如下图所示，mini-batch大小为N，单词embedding后的维度为D，输出向量维度为H，就有下图矩阵乘法维度表示关系。</p>
-<p><img src="/2024/03/01/RNN/image-20240306160805767.png" alt="image-20240306160805767"></p>
-<p>下面我们写出单个RNN的正向传播和反向传播代码。首先看正向传播和反向传播示意图如下。</p>
-<p><img src="/2024/03/01/RNN/image-20240306161543869.png" alt="image-20240306161543869"></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RNN</span>:</span><br><span class="line">     <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, Wx, Wh, b</span>):</span><br><span class="line">         self.params = [Wx, Wh, b]</span><br><span class="line">         self.grads = [np.zeros_like(Wx), np.zeros_like(Wh),np.zeros_like(b)]</span><br><span class="line">         self.cache = <span class="literal">None</span></span><br><span class="line">    </span><br><span class="line">     <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x, h_prev</span>):</span><br><span class="line">         Wx, Wh, b = self.params</span><br><span class="line">         t = np.dot(h_prev, Wh) + np.dot(x, Wx) + b</span><br><span class="line">         h_next = np.tanh(t)</span><br><span class="line">         self.cache = (x, h_prev, h_next)</span><br><span class="line">         <span class="keyword">return</span> h_next</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">backward</span>(<span class="params">self, dh_next</span>):</span><br><span class="line">         Wx, Wh, b = self.params</span><br><span class="line">         x, h_prev, h_next = self.cache</span><br><span class="line">         dt = dh_next * (<span class="number">1</span> - h_next ** <span class="number">2</span>)</span><br><span class="line">         db = np.<span class="built_in">sum</span>(dt, axis=<span class="number">0</span>)</span><br><span class="line">         dWh = np.dot(h_prev.T, dt)</span><br><span class="line">         dh_prev = np.dot(dt, Wh.T)</span><br><span class="line">         dWx = np.dot(x.T, dt)</span><br><span class="line">         dx = np.dot(dt, Wx.T)</span><br><span class="line">         self.grads[<span class="number">0</span>][...] = dWx</span><br><span class="line">         self.grads[<span class="number">1</span>][...] = dWh</span><br><span class="line">         self.grads[<span class="number">2</span>][...] = db</span><br><span class="line">         <span class="keyword">return</span> dx, dh_prev</span><br></pre></td></tr></table></figure>
-<p>正向传播代码很好理解，就照着公式计算就好了。反向传播的难点在矩阵乘法，矩阵乘法的反向传播算法参见博客神经网络的正向和反向传播。</p>
-
+          <p>RNN原理详解与python代码实现</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/03/01/RNN/">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -525,7 +501,7 @@ h_{t}=tanh(h_{t-1}W_t+x_tW_x+b)</script><p>注意：上图中的<script type="ma
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-06 08:30:33" itemprop="dateModified" datetime="2024-03-06T08:30:33+08:00">2024-03-06</time>
+                <time title="修改时间：2024-03-16 23:51:01" itemprop="dateModified" datetime="2024-03-16T23:51:01+08:00">2024-03-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -548,24 +524,15 @@ h_{t}=tanh(h_{t-1}W_t+x_tW_x+b)</script><p>注意：上图中的<script type="ma
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="自然语言和单词的分布式表示"><a href="#自然语言和单词的分布式表示" class="headerlink" title="自然语言和单词的分布式表示"></a>自然语言和单词的分布式表示</h1><p>如果想让计算机处理自然语言(平常使用的语言，例如汉语、英语等)，那么我们第一步就是要让计算机能够理解自然语言。下面我们将简单介绍两种方法，一种是基于同义词词典的方法，一种是基于计数的方法。最后再仔细介绍word2vec方法。</p>
-<h4 id="同义词词典"><a href="#同义词词典" class="headerlink" title="同义词词典"></a>同义词词典</h4><p>在同义词词典中，具有相同含义的单词（同义词）或含义类似的单词（近义词）被归类到同一个组中。比如，使用同义词词典，我们可以知道 car 的同义词有automobile、motorcar 等。另外，在自然语言处理中用到的同义词词典有时会定义单词之间的粒度更细的关系，比如“上位 - 下位”关系、“整体 - 部分”关系。举个例子，如下图所示，我们利用图结构定义了各个单词之间的关系。</p>
-<p><img src="/2024/02/29/word2vec/a.PNG" alt="a"></p>
-<p>像这样，通过对所有单词创建近义词集合，并用图表示各个单词的关系，可以定义单词之间的联系。利用这个“单词网络”，可以教会计算机单词之间的相关性。也就是说，我们可以将单词含义（间接地）教给计算机，然后利用这一知识，就能让计算机做一些对我们有用的事情。</p>
-<p>使用同义词词典，即人工定义单词含义的方法存在很多问题。为了避免这些问题，接下来我们将介绍基于计数的方法和利用神经网络的基于推理的方法。这两种方法可以从海量的文本数据中自动提取单词含义，将我们从人工关联单词的辛苦劳动中解放出来。</p>
-<h4 id="基于计数的方法"><a href="#基于计数的方法" class="headerlink" title="基于计数的方法"></a>基于计数的方法</h4><p>世界上存在各种各样的颜色，但是我们可以使用RGB三种颜色来表示另外任意一种颜色，这就是说我们在一个三维空间内使用三维向量就可以表示所有的颜色了。对于自然语言来说，我们也想使用一个向量来表示一个单词，至于这个单词是几维的我们现在还无法确定。这样，使用向量来表示单词的方式被称为==分布式表示==。</p>
-<p>分布式表示到底是什么意思呢？我们要知道分布式假设。某个单词的含义由它周围的单词形成的想法被称为分布式假设。分布式假设所表达的理念非常简单。单词本身没有含义，单词含义由它所在的上下文（语境）形成。的确，含义相同的单词经常出现在相同的语境中。比如“I drink beer.”“We drink wine.”，drink 的附近常有饮料出现。另外，从“I guzzle beer.”“We guzzle wine.”可知，guzzle 和 drink 所在的语境相似。进而我们可以推测出，guzzle 和 drink 是近义词（顺便说一下，guzzle 是“大口喝”的意思）。</p>
-<p>我们会经常使用“上下文”一词。上下文是指某个单词（关注词）周围的单词。上下文是指某个居中单词的周围词汇。这里，我们将上下文的大小（即周围的单词有多少个）称为窗口大小（window size）。窗口大小为 1，上下文包含左右各 1 个单词；窗口大小为 2，上下文包含左右各2 个单词，以此类推。</p>
-<p>下面，我们来考虑如何基于分布式假设使用向量表示单词，最直截了当的实现方法是对周围单词的数量进行计数。具体来说，在关注某个单词的情况下，对它的周围出现了多少次什么单词进行计数，然后再汇总。这里，我们将这种做法称为“基于计数的方法”，在有的文献中也称为“基于统计的方法”。</p>
-<p><img src="/2024/02/29/word2vec/b.png" alt="b"></p>
-<p><img src="/2024/02/29/word2vec/study\shenzhen0502\source\_posts\word2vec\c.png" alt="image-20240301104117281"></p>
-<p>如上图所示，我们有一句话为 you say goodbye and i say hello。这里单词you根据上下文就可以表示向量$[0,1,0,0,0,0,0]$，单词say根据上下文就可以表示为$[1,0,1,0,1,1,0]$，所以我们基于计数的方法就用向量表示出了单词。这里我们就浅尝辄止了，不继续往下介绍了。下面重点介绍word2vec方法。</p>
-<h1 id="word2vec"><a href="#word2vec" class="headerlink" title="word2vec"></a>word2vec</h1><p>上面介绍了基于计数的方法，这个方法会根据某个单词周边单词出现的次数来使用向量表示这个单词，但是这种方法会有很多缺点。word2vec是一种基于推理的方法，如下图所示，当给出周围的单词（上下文）时，预测“？”处会出现什么单词，这就是推理。</p>
-<p><img src="/2024/02/29/word2vec/c.png" alt="c"></p>
-<p>解开上图中的推理问题并学习规律，就是基于推理的方法的主要任务。通过反复求解这些推理问题，可以学习到单词的出现模式。从“模型视角”出发，这个推理问题如下图所示。</p>
-<p><img src="/2024/02/29/word2vec/d.png" alt="image-20240301111015593"></p>
-<p>如上图所示，基于推理的方法引入了某种模型，我们将神经网络用于此模型。这个模型接收上下文信息作为输入，并输出（可能出现的）各个单词的出现概率。在这样的框架中，使用语料库来学习模型，使之能做出正确的预测。另外，作为模型学习的产物，我们得到了单词的分布式表示。这就是基于推理的方法的全貌。</p>
-
+          <p>word2vec原理详解与代码实现</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/02/29/word2vec/">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
